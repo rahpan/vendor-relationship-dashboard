@@ -36,18 +36,25 @@ const data = {
     {id:'v-001',type:'vendor',label:'Vendor V-001',status:'confirmed'},
     {id:'v-002',type:'vendor',label:'Vendor V-002',status:'prospect'},
     {id:'v-003',type:'vendor',label:'Vendor V-003',status:'prospect'},
+    {id:'v-004',type:'vendor',label:'Vendor V-004',status:'confirmed'},
+    {id:'v-005',type:'vendor',label:'Vendor V-005',status:'confirmed'},
     {id:'am-001',type:'manager',label:'AM-001',subtitle:'Account contact',status:'confirmed'},
     {id:'am-002',type:'manager',label:'AM-002',subtitle:'Account contact',status:'prospect'},
     {id:'am-003',type:'manager',label:'AM-003',subtitle:'Account contact',status:'prospect'},
     {id:'am-004',type:'manager',label:'AM-004',subtitle:'Account contact',status:'prospect'},
+    {id:'am-005',type:'manager',label:'AM-005',subtitle:'Account contact',status:'prospect'},
     {id:'r-001',type:'recruiter',label:'R-001',subtitle:'Recruiter contact',status:'prospect'},
     {id:'r-002',type:'recruiter',label:'R-002',subtitle:'Unresolved contact',status:'unknown'},
     {id:'r-003',type:'recruiter',label:'R-003',subtitle:'Unresolved contact',status:'unknown'}
+    ,{id:'r-004',type:'recruiter',label:'R-004',subtitle:'Recruiter contact',status:'prospect'}
+    ,{id:'r-005',type:'recruiter',label:'R-005',subtitle:'Recruiter contact',status:'prospect'}
   ],
   links: [
     {source:'c-001',target:'v-001',status:'confirmed'},
     {source:'c-001',target:'v-002',status:'prospect'},
     {source:'c-001',target:'v-003',status:'prospect'},
+    {source:'c-001',target:'v-004',status:'confirmed'},
+    {source:'c-001',target:'v-005',status:'confirmed'},
     {source:'v-001',target:'am-001',status:'confirmed'},
     {source:'v-001',target:'am-002',status:'prospect'},
     {source:'v-002',target:'am-003',status:'prospect'},
@@ -55,6 +62,9 @@ const data = {
     {source:'v-003',target:'r-001',status:'prospect'},
     {source:'v-001',target:'r-002',status:'unknown'},
     {source:'v-002',target:'r-003',status:'unknown'}
+    ,{source:'v-004',target:'am-005',status:'prospect'}
+    ,{source:'v-004',target:'r-004',status:'prospect'}
+    ,{source:'v-005',target:'r-005',status:'prospect'}
   ]
 };
 const colors={client:'#47d7ac',vendor:'#67a8ff',manager:'#ffc857',recruiter:'#ff7d9c'}, names={client:'Client',vendor:'Vendor',manager:'Account manager',recruiter:'Recruiter'};
