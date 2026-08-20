@@ -17,7 +17,7 @@
 <body>
 <main>
   <h1>Client–Vendor Relationship Map</h1>
-  <p class="sub">A living view of end clients, approved vendors, account managers, and recruiters. Select a bubble to trace its relationship path.</p>
+  <p class="sub">A privacy-safe view of coded clients, vendors, account managers, and recruiters. Select a bubble to trace its relationship path.</p>
   <div class="toolbar">
     <input id="search" class="search" type="search" placeholder="Search client, vendor, or contact…" aria-label="Search relationships">
     <span class="pill">Solid = confirmed</span><span class="pill">Dashed = prospect</span>
@@ -32,29 +32,29 @@
 <script>
 const data = {
   nodes: [
-    {id:'hcsc',type:'client',label:'HCSC',status:'confirmed'},
-    {id:'swoon',type:'vendor',label:'Swoon',status:'confirmed'},
-    {id:'launch',type:'vendor',label:'Launch / Strive',status:'prospect'},
-    {id:'mastech',type:'vendor',label:'Mastech Digital',status:'prospect'},
-    {id:'khristiana-randazzo',type:'manager',label:'Khristiana Randazzo',subtitle:'Account Manager',status:'confirmed'},
-    {id:'antoine-smith',type:'manager',label:'Antoine Smith',subtitle:'Enterprise Account Manager',status:'prospect'},
-    {id:'nikolas-darrus',type:'manager',label:'Nikolas Darrus',subtitle:'Prospective contact',status:'prospect'},
-    {id:'khais-khan',type:'manager',label:'Khais Khan',subtitle:'Executive Client Partner',status:'prospect'},
-    {id:'neha-naithani',type:'recruiter',label:'Neha Naithani',subtitle:'Sr. Recruitment Consultant',status:'prospect'},
-    {id:'swoon-recruiter-tbd',type:'recruiter',label:'Recruiter TBD',subtitle:'Swoon',status:'unknown'},
-    {id:'launch-recruiter-tbd',type:'recruiter',label:'Recruiter TBD',subtitle:'Launch / Strive',status:'unknown'}
+    {id:'c-001',type:'client',label:'Client C-001',status:'confirmed'},
+    {id:'v-001',type:'vendor',label:'Vendor V-001',status:'confirmed'},
+    {id:'v-002',type:'vendor',label:'Vendor V-002',status:'prospect'},
+    {id:'v-003',type:'vendor',label:'Vendor V-003',status:'prospect'},
+    {id:'am-001',type:'manager',label:'AM-001',subtitle:'Account contact',status:'confirmed'},
+    {id:'am-002',type:'manager',label:'AM-002',subtitle:'Account contact',status:'prospect'},
+    {id:'am-003',type:'manager',label:'AM-003',subtitle:'Account contact',status:'prospect'},
+    {id:'am-004',type:'manager',label:'AM-004',subtitle:'Account contact',status:'prospect'},
+    {id:'r-001',type:'recruiter',label:'R-001',subtitle:'Recruiter contact',status:'prospect'},
+    {id:'r-002',type:'recruiter',label:'R-002',subtitle:'Unresolved contact',status:'unknown'},
+    {id:'r-003',type:'recruiter',label:'R-003',subtitle:'Unresolved contact',status:'unknown'}
   ],
   links: [
-    {source:'hcsc',target:'swoon',status:'confirmed'},
-    {source:'hcsc',target:'launch',status:'prospect'},
-    {source:'hcsc',target:'mastech',status:'prospect'},
-    {source:'swoon',target:'khristiana-randazzo',status:'confirmed'},
-    {source:'swoon',target:'antoine-smith',status:'prospect'},
-    {source:'launch',target:'nikolas-darrus',status:'prospect'},
-    {source:'mastech',target:'khais-khan',status:'prospect'},
-    {source:'mastech',target:'neha-naithani',status:'prospect'},
-    {source:'swoon',target:'swoon-recruiter-tbd',status:'unknown'},
-    {source:'launch',target:'launch-recruiter-tbd',status:'unknown'}
+    {source:'c-001',target:'v-001',status:'confirmed'},
+    {source:'c-001',target:'v-002',status:'prospect'},
+    {source:'c-001',target:'v-003',status:'prospect'},
+    {source:'v-001',target:'am-001',status:'confirmed'},
+    {source:'v-001',target:'am-002',status:'prospect'},
+    {source:'v-002',target:'am-003',status:'prospect'},
+    {source:'v-003',target:'am-004',status:'prospect'},
+    {source:'v-003',target:'r-001',status:'prospect'},
+    {source:'v-001',target:'r-002',status:'unknown'},
+    {source:'v-002',target:'r-003',status:'unknown'}
   ]
 };
 const colors={client:'#47d7ac',vendor:'#67a8ff',manager:'#ffc857',recruiter:'#ff7d9c'}, names={client:'Client',vendor:'Vendor',manager:'Account manager',recruiter:'Recruiter'};
@@ -66,7 +66,8 @@ function render(query=''){
   const q=query.trim().toLowerCase(); const matching=new Set(data.nodes.filter(n=>!q||`${n.label} ${n.subtitle||''}`.toLowerCase().includes(q)).map(n=>n.id));
   const visible=new Set(matching); if(q){for(let i=0;i<3;i++) for(const l of data.links) if(visible.has(l.source)||visible.has(l.target)){visible.add(l.source);visible.add(l.target)}} else data.nodes.forEach(n=>visible.add(n.id));
   const columns={client:150,vendor:450,manager:750,recruiter:1050}; const byType={client:[],vendor:[],manager:[],recruiter:[]}; data.nodes.forEach(n=>byType[n.type].push(n));
-  const positions={}; for(const [type,nodes] of Object.entries(byType)){const gap=560/(nodes.length+1);nodes.forEach((n,i)=>positions[n.id]={x:columns[type],y:52+gap*(i+1)})}
+  const largestColumn=Math.max(1,...Object.values(byType).map(nodes=>nodes.length)); const graphHeight=Math.max(660,largestColumn*145+100); svg.setAttribute('viewBox',`0 0 1200 ${graphHeight}`);
+  const positions={}; for(const [type,nodes] of Object.entries(byType)){const gap=(graphHeight-100)/(nodes.length+1);nodes.forEach((n,i)=>positions[n.id]={x:columns[type],y:50+gap*(i+1)})}
   const links=data.links.map(l=>{const a=positions[l.source],b=positions[l.target];return `<path class="edge ${l.status==='confirmed'?'':'status'} ${q&&(!visible.has(l.source)||!visible.has(l.target))?'inactive':''}" data-a="${l.source}" data-b="${l.target}" d="M${a.x+62},${a.y} C${a.x+150},${a.y} ${b.x-150},${b.y} ${b.x-62},${b.y}"/>`}).join('');
   const nodes=data.nodes.map(n=>{const p=positions[n.id],lines=wrap(n.label),inactive=q&&!visible.has(n.id);return `<g class="node ${n.status==='confirmed'?'':'status'} ${inactive?'inactive':''}" data-id="${n.id}" transform="translate(${p.x} ${p.y})" tabindex="0" role="button"><circle r="${n.type==='client'?66:58}" fill="${colors[n.type]}" fill-opacity=".88"/><text>${lines.map((x,i)=>`<tspan x="0" dy="${i?16:lines.length>1?-4:3}">${esc(x)}</tspan>`).join('')}${n.subtitle?`<tspan class="small" x="0" dy="17">${esc(n.subtitle.length>25?n.subtitle.slice(0,24)+'…':n.subtitle)}</tspan>`:''}</text><title>${esc(n.label)} — ${names[n.type]} — ${n.status}</title></g>`}).join('');
   svg.innerHTML=links+nodes; document.querySelector('#summary').textContent=`${byType.client.length} client · ${byType.vendor.length} vendors · ${byType.manager.length} account contacts · ${byType.recruiter.length} recruiter records`;
